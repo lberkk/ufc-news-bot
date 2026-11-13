@@ -1,0 +1,44 @@
+# Haber kaynakları. Sıra önceliktir: aynı haber iki kaynakta varsa üstteki kullanılır.
+feeds:
+  - name: Sherdog
+    url: https://www.sherdog.com/rss/news.xml
+  - name: MMA Fighting
+    url: https://www.mmafighting.com/rss/index.xml
+
+daily_limit: 10
+max_per_run: 1
+max_age_hours: 12
+similarity_threshold: 0.7
+similarity_window_hours: 48
+
+exclude_keywords:
+  - odds
+  - betting
+  - how to watch
+  - live stream
+  - prediction
+  - picks
+  - fantasy
+  - rumor
+  - reportedly
+
+image_mode: feed # feed | none
+image_min_width: 600
+image_blocklist: [] # görseli kullanılmayacak kaynak adları, örn. [Sherdog]
+
+llm:
+  max_chars: 270 # "Kaynak: ..." dahil toplam üst sınır
+  providers: # sırayla denenir; hata veya limit olursa sonrakine geçilir
+    - name: gemini-hydrogen
+      base_url: https://generativelanguage.googleapis.com/v1beta/openai
+      model: gemini-4-hydrogen
+      key_env: GEMINI_API_KEY
+      reasoning_effort: low
+    - name: gemini-flash-lite
+      base_url: https://generativelanguage.googleapis.com/v1beta/openai
+      model: gemini-3.5-flash-lite
+      key_env: GEMINI_API_KEY
+    - name: groq
+      base_url: https://api.groq.com/openai/v1
+      model: llama-3.3-70b-versatile # Groq konsolundaki güncel model adını kontrol et
+      key_env: GROQ_API_KEY
