@@ -24,3 +24,16 @@ UFC 334 tartı sonuçları belli oldu. Madison Square Garden'da düzenlenecek et
 
 ---
 
+## 2026-11-13 18:12 · Açıklama · MMA Fighting
+
+Daniel Cormier, RAF Abu Dhabi öncesinde Merab Dvalishvili'ye saldıran Usman Nurmagomedov'u eleştirdi. Cormier, ikili arasındaki husumete rağmen bu tür tehlikeli davranışların kabul edilemez olduğunu söyledi.
+
+📰 MMA Fighting
+
+- Karakter: 223
+- Orijinal: Morning Report: Daniel Cormier condemns Usman Nurmagomedov’s attack on Merab Dvalishvili
+- Haber: https://www.mmafighting.com/ufc/520225/morning-report-daniel-cormier-condemns-usman-nurmagomedovs-attack-on-merab-dvalishvili
+- Görsel: https://platform.mmafighting.com/wp-content/uploads/sites/109/2026/08/gettyimages-2288531225.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100
+
+---
+
