@@ -37,3 +37,16 @@ Daniel Cormier, RAF Abu Dhabi öncesinde Merab Dvalishvili'ye saldıran Usman Nu
 
 ---
 
+## 2026-11-13 23:04 · Maç duyurusu · MMA Fighting
+
+Merab Dvalishvili, Usman Nurmagomedov ve ekibinin saldırısına rağmen cumartesi günü RAF Abu Dhabi'de Marlon Moraes ile güreşecek. Olayda yer alan Saba Lazishvili de Umar Nurmagomedov'un yerine Urijah Faber'in rakibi oldu.
+
+📰 MMA Fighting
+
+- Karakter: 237
+- Orijinal: Merab Dvalishvili still competing at RAF Abu Dhabi, Saba Lazishvili also added to card after Usman Nurmagomedov attack
+- Haber: https://www.mmafighting.com/raf-wrestling/520878/merab-dvalishvili-still-competing-at-raf-abu-dhabi-saba-lazishvili-also-added-to-card-after-usman-nurmagomedov-attack
+- Görsel: https://platform.mmafighting.com/wp-content/uploads/sites/109/2026/11/gettyimages-2301820327.jpg?quality=90&strip=all&crop=0,0,100,100
+
+---
+
