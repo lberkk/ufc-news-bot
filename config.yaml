@@ -1,9 +1,9 @@
 # Haber kaynakları. Sıra önceliktir: aynı haber iki kaynakta varsa üstteki kullanılır.
 feeds:
-  - name: Sherdog
-    url: https://www.sherdog.com/rss/news.xml
   - name: MMA Fighting
     url: https://www.mmafighting.com/rss/index.xml
+  - name: Sherdog
+    url: https://www.sherdog.com/rss/news.xml
 
 daily_limit: 10
 max_per_run: 1

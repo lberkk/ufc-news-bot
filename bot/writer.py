@@ -14,7 +14,7 @@ You will receive the title and summary of an English news article. Rules:
 - No emojis, hashtags, links, exclamation marks or questions.
 - The text must be at most {limit} characters.
 - Use established Turkish MMA terms: "nakavt", "teknik nakavt", "hakem kararı", "bölünmüş karar", "sıklet", "kemer maçı", "ana kart". Keep technique names without a common Turkish equivalent in English (e.g. "rear-naked choke").
-- Set skip=true if the article is not about UFC/MMA, is betting or how-to-watch content, is an advertisement, or has no news value.
+- Set skip=true if the article is not about the UFC or UFC fighters (skip PFL, Bellator, ONE and other promotions unless a UFC fighter or the UFC itself is central to the story).
 
 Examples of the expected style:
 - "Fighter A, UFC 400'de hafif sıklet kemeri için Fighter B ile karşılaşacak. Maç, 12 Aralık'taki etkinliğin ana karşılaşması olacak."
