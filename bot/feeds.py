@@ -14,15 +14,15 @@ def _image_from_entry(entry):
     for key in ("media_content", "media_thumbnail"):
         for m in entry.get(key) or []:
             if m.get("url"):
-                return m["url"]
+                return htmllib.unescape(m["url"])
     for enc in entry.get("enclosures") or []:
         if (enc.get("type") or "").startswith("image") and enc.get("href"):
-            return enc["href"]
+            return htmllib.unescape(enc["href"])
     html = entry.get("summary", "") or ""
     for c in entry.get("content") or []:
         html += c.get("value", "")
     m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', html)
-    return m.group(1) if m else None
+    return htmllib.unescape(m.group(1)) if m else None
 
 
 def _clean(html):
