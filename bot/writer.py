@@ -5,15 +5,22 @@ import re
 
 import requests
 
-SYSTEM = """Bir UFC/MMA haber hesabı için Türkçe post yazıyorsun.
-Sana İngilizce bir haberin başlığı ve özeti verilecek. Kurallar:
-- Yalnızca verilen haberdeki bilgiyi kullan. Haberde olmayan hiçbir bilgi, tarih, sonuç veya yorum ekleme.
-- Dövüşçü adlarını, etkinlik adlarını ve sayıları kaynaktaki gibi aynen koru.
-- Kendi cümlelerinle yaz; başlığı kelimesi kelimesine çevirme.
-- Sade haber dili kullan. Emoji, hashtag, link, ünlem ve soru cümlesi kullanma.
-- Metin en fazla {limit} karakter olsun.
-- Haber UFC/MMA ile ilgili değilse, bahis/izleme rehberi/reklam içeriğiyse veya haber değeri yoksa skip=true döndür.
-Yalnızca şu JSON'u döndür:
+SYSTEM = """You write posts in Turkish for a UFC/MMA news account on X.
+You will receive the title and summary of an English news article. Rules:
+- Write the post in natural, fluent Turkish, in a plain news register.
+- Use only information present in the article. Never add facts, dates, results or opinions that are not in it.
+- Keep fighter names, event names and numbers exactly as written in the source.
+- Write your own sentences; do not translate the headline word for word.
+- No emojis, hashtags, links, exclamation marks or questions.
+- The text must be at most {limit} characters.
+- Use established Turkish MMA terms: "nakavt", "teknik nakavt", "hakem kararı", "bölünmüş karar", "sıklet", "kemer maçı", "ana kart". Keep technique names without a common Turkish equivalent in English (e.g. "rear-naked choke").
+- Set skip=true if the article is not about UFC/MMA, is betting or how-to-watch content, is an advertisement, or has no news value.
+
+Examples of the expected style:
+- "Fighter A, UFC 400'de hafif sıklet kemeri için Fighter B ile karşılaşacak. Maç, 12 Aralık'taki etkinliğin ana karşılaşması olacak."
+- "Fighter C, dizinden sakatlandığı için cumartesi günkü maçından çekildi. UFC, yerine geçecek isim için arayışta."
+
+Return only this JSON:
 {{"skip": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "..."}}"""
 
 
@@ -46,7 +53,7 @@ def _parse(raw):
 
 def write_post(item, cfg, call=_call):
     """(text, category) döner; haber atlanacaksa (None, None)."""
-    suffix = f"\n\nKaynak: {item['source']}"
+    suffix = f"\n\n📰 {item['source']}"
     limit = cfg["max_chars"] - len(suffix)
     messages = [
         {"role": "system", "content": SYSTEM.format(limit=limit)},
@@ -70,6 +77,6 @@ def write_post(item, cfg, call=_call):
             print(f"[llm] {last}")
             messages = messages[:2] + [
                 {"role": "assistant", "content": json.dumps(data, ensure_ascii=False)},
-                {"role": "user", "content": f"Metin {limit} karakteri aşıyor veya link içeriyor. Kısaltıp aynı JSON biçiminde yeniden yaz."},
+                {"role": "user", "content": f"The text exceeds {limit} characters or contains a link. Shorten it and return the same JSON format."},
             ]
     raise LLMError(f"Hiçbir sağlayıcı sonuç vermedi. Son hata: {last}")

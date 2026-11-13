@@ -12,15 +12,14 @@ similarity_threshold: 0.7
 similarity_window_hours: 48
 
 exclude_keywords:
-  - odds
   - betting
+  - odds and
+  - best bets
+  - predictions
+  - staff picks
+  - fantasy
   - how to watch
   - live stream
-  - prediction
-  - picks
-  - fantasy
-  - rumor
-  - reportedly
 
 image_mode: feed # feed | none
 image_min_width: 600
