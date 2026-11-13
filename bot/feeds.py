@@ -2,6 +2,8 @@
 import calendar
 import re
 import time
+import html as htmllib
+import requests
 
 import feedparser
 
@@ -52,3 +54,15 @@ def fetch_all(feeds):
         print(f"[feed] {feed['name']}: {len(items)} kayıt")
         out.append((feed["name"], items))
     return out
+
+def fetch_article(url, limit=5000):
+    """Haber sayfasının gövde metnini döner; alınamazsa boş metin."""
+    try:
+        page = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (compatible; ufc-news-bot/1.0)"}, timeout=20).text
+    except requests.RequestException as exc:
+        print(f"[article] alınamadı: {exc}")
+        return ""
+    page = re.sub(r"<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", page, flags=re.S | re.I)
+    parts = re.findall(r"<(?:p|li)[^>]*>(.*?)</(?:p|li)>", page, re.S | re.I)
+    texts = [htmllib.unescape(_clean(p)) for p in parts]
+    return " ".join(t for t in texts if len(t) > 40)[:limit]

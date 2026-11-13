@@ -34,6 +34,7 @@ def main():
         if db.similar(item["title"], cfg["similarity_window_hours"], cfg["similarity_threshold"]):
             db.record(item, "duplicate")
             continue
+        item["body"] = feeds.fetch_article(item["link"])
         try:
             text, category = writer.write_post(item, cfg["llm"])
         except writer.LLMError as exc:

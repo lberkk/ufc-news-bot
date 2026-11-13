@@ -57,7 +57,7 @@ def write_post(item, cfg, call=_call):
     limit = cfg["max_chars"] - len(suffix)
     messages = [
         {"role": "system", "content": SYSTEM.format(limit=limit)},
-        {"role": "user", "content": f"Başlık: {item['title']}\nÖzet: {item['summary']}"},
+        {"role": "user", "content": f"Title: {item['title']}\nSummary: {item['summary']}\nArticle text: {item.get('body', '')}"},
     ]
     last = None
     for provider in cfg["providers"]:
