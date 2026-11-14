@@ -10,6 +10,8 @@ You will receive the title and summary of an English news article. Rules:
 - Write the post in natural, fluent Turkish, in a plain news register.
 - Use only information present in the article. Never add facts, dates, results or opinions that are not in it.
 - Keep fighter names, event names and numbers exactly as written in the source.
+- English headlines and previews describe upcoming fights in the present tense ("clash", "square off", "faces", "defends"). Treat a fight as already finished only if the article states its outcome (who won and how). Otherwise it has not happened yet: write it in the Turkish future tense ("karşılaşacak", "savunacak"), never in the past tense.
+- Translate weight classes exactly: flyweight = sinek sıklet, bantamweight = horoz sıklet, featherweight = tüy sıklet, lightweight = hafif sıklet, welterweight = yarı orta sıklet, middleweight = orta sıklet, light heavyweight = hafif ağır sıklet, heavyweight = ağır sıklet.
 - Write your own sentences; do not translate the headline word for word.
 - No emojis, hashtags, links, exclamation marks or questions.
 - The text must be at most {limit} characters.
