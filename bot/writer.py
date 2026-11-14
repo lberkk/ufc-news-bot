@@ -53,7 +53,7 @@ def _parse(raw):
 
 def write_post(item, cfg, call=_call):
     """(text, category) döner; haber atlanacaksa (None, None)."""
-    suffix = f"\n\n📰 {item['source']}"
+    suffix = ""
     limit = cfg["max_chars"] - len(suffix)
     messages = [
         {"role": "system", "content": SYSTEM.format(limit=limit)},
