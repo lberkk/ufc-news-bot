@@ -42,7 +42,7 @@ class Store:
     def published_last_24h(self):
         since = time.time() - 24 * 3600
         return self.db.execute(
-            "SELECT COUNT(*) FROM items WHERE seen_at>? AND status IN ('posted','draft')", (since,)
+            "SELECT COUNT(*) FROM items WHERE seen_at>? AND status='posted'", (since,)
         ).fetchone()[0]
 
     def image_hash_count(self, h):

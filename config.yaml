@@ -5,7 +5,7 @@ feeds:
   - name: Sherdog
     url: https://www.sherdog.com/rss/news.xml
 
-daily_limit: 10
+daily_limit: 20
 max_per_run: 1
 max_age_hours: 12
 similarity_threshold: 0.7
