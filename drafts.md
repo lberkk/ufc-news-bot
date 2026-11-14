@@ -50,3 +50,16 @@ Merab Dvalishvili, Usman Nurmagomedov ve ekibinin saldırısına rağmen cumarte
 
 ---
 
+## 2026-11-14 03:10 · Açıklama · MMA Fighting
+
+Aşırı doz şüphesiyle hastaneye kaldırıldığı bildirilen UFC tüy sıklet dövüşçüsü Tommy McMillen, olayın ardından ilk açıklamasını yaptı. Antrenmanlara döndüğünü belirten 28 yaşındaki dövüşçü, kısa süreli bir maç teklifine hazır olduğunu söyledi.
+
+📰 MMA Fighting
+
+- Karakter: 260
+- Orijinal: Tommy McMillen releases first statement since reported possible overdose
+- Haber: https://www.mmafighting.com/ufc/520837/tommy-mcmillen-releases-first-statement-since-reported-possible-overdose
+- Görsel: https://platform.mmafighting.com/wp-content/uploads/sites/109/2026/09/gettyimages-2294954178.jpg?quality=90&strip=all&crop=0,0,100,100
+
+---
+
