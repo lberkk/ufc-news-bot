@@ -63,3 +63,16 @@ Aşırı doz şüphesiyle hastaneye kaldırıldığı bildirilen UFC tüy sıkle
 
 ---
 
+## 2026-11-14 10:19 · Açıklama · MMA Fighting
+
+Carlos Prates ve Michael Morales, 30 Ocak'taki UFC 336'da geçici velterweight kemeri için karşılaşacak. İkili, New York'taki ortak basın toplantısında gergin bir yüz yüze gelme yaşadı.
+
+📰 MMA Fighting
+
+- Karakter: 200
+- Orijinal: Video: Carlos Prates and Michael Morales have intense first faceoff at UFC 335 and UFC 336 press conference
+- Haber: https://www.mmafighting.com/ufc/520992/video-carlos-prates-and-michael-morales-have-intense-first-faceoff-at-ufc-335-and-ufc-336-press-conference
+- Görsel: https://platform.mmafighting.com/wp-content/uploads/sites/109/2026/11/gettyimages-2305011528.jpg?quality=90&strip=all&crop=0,0,100,100
+
+---
+
