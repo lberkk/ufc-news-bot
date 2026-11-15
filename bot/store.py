@@ -3,6 +3,8 @@ import difflib
 import re
 import sqlite3
 import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS items (
@@ -39,8 +41,10 @@ class Store:
         )
         self.db.commit()
 
-    def published_last_24h(self):
-        since = time.time() - 24 * 3600
+    def published_today(self):
+        """Türkiye saatiyle bugün gece yarısından beri atılan post sayısı."""
+        now = datetime.now(ZoneInfo("Europe/Istanbul"))
+        since = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
         return self.db.execute(
             "SELECT COUNT(*) FROM items WHERE seen_at>? AND status='posted'", (since,)
         ).fetchone()[0]

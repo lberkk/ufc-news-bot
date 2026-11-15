@@ -22,7 +22,7 @@ def main():
         key=lambda i: i["published"],
     )
 
-    remaining = cfg["daily_limit"] - db.published_last_24h()
+    remaining = cfg["daily_limit"] - db.published_today()
     done = 0
     for item in candidates:
         if done >= cfg["max_per_run"] or remaining <= 0:
