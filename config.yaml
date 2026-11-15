@@ -5,8 +5,6 @@ feeds:
     url: https://www.mmafighting.com/rss/index.xml
   - name: Bloody Elbow
     url: https://bloodyelbow.com/feed/
-  - name: Sherdog
-    url: https://www.sherdog.com/rss/news.xml
 
 daily_limit: 10
 max_per_run: 1
