@@ -3,6 +3,7 @@ import json
 import os
 import re
 
+import anthropic
 import requests
 
 SYSTEM = """You write posts in Turkish for a UFC/MMA news account on X.
@@ -36,7 +37,29 @@ class LLMError(Exception):
     pass
 
 
+def _call_anthropic(provider, messages):
+    key = os.environ.get(provider["key_env"], "")
+    if not key:
+        raise LLMError(f"{provider['key_env']} tanımlı değil")
+    client = anthropic.Anthropic(api_key=key, timeout=60.0, max_retries=1)
+    try:
+        r = client.messages.create(
+            model=provider["model"],
+            max_tokens=4000,
+            system=messages[0]["content"],
+            messages=messages[1:],
+            output_config={"effort": "low"},
+        )
+    except (anthropic.APIStatusError, anthropic.APIConnectionError) as exc:
+        raise LLMError(f"{type(exc).__name__}: {exc}") from exc
+    if r.stop_reason == "refusal":
+        raise LLMError("model yanıt vermeyi reddetti")
+    return next((b.text for b in r.content if b.type == "text"), "")
+
+
 def _call(provider, messages):
+    if provider.get("type") == "anthropic":
+        return _call_anthropic(provider, messages)
     key = os.environ.get(provider["key_env"], "")
     if not key:
         raise LLMError(f"{provider['key_env']} tanımlı değil")

@@ -76,6 +76,10 @@ llm:
     - catchweight
     - no contest
   providers: # sırayla denenir; hata veya limit olursa sonrakine geçilir
+    - name: claude-haiku
+      type: anthropic # Anthropic SDK ile çağrılır; diğerleri OpenAI uyumlu
+      model: claude-haiku-5-5
+      key_env: ANTHROPIC_API_KEY
     - name: groq
       base_url: https://api.groq.com/openai/v1
       model: openai/gpt-oss-120b
