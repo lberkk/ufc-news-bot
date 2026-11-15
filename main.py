@@ -15,10 +15,12 @@ def main():
         print("Hiçbir feed'den kayıt gelmedi.")
         sys.exit(1)
 
-    candidates = []
     cutoff = time.time() - cfg["max_age_hours"] * 3600
-    for _, items in fetched:  # config sırası = öncelik
-        candidates += sorted((i for i in items if i["published"] >= cutoff), key=lambda i: i["published"])
+    # Tüm kaynaklar birlikte, eskiden yeniye; aynı saatte config sırası korunur.
+    candidates = sorted(
+        (i for _, items in fetched for i in items if i["published"] >= cutoff),
+        key=lambda i: i["published"],
+    )
 
     remaining = cfg["daily_limit"] - db.published_last_24h()
     done = 0

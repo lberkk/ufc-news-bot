@@ -1,13 +1,16 @@
-# Haber kaynakları. Sıra önceliktir: aynı haber iki kaynakta varsa üstteki kullanılır.
+# Haber kaynakları. Her koşuda hepsi birlikte taranır ve haberler yayın saatine göre işlenir;
+# aynı haber iki kaynakta varsa önce yayımlanan paylaşılır, diğeri tekrar olarak elenir.
 feeds:
   - name: MMA Fighting
     url: https://www.mmafighting.com/rss/index.xml
+  - name: Bloody Elbow
+    url: https://bloodyelbow.com/feed/
   - name: Sherdog
     url: https://www.sherdog.com/rss/news.xml
 
-daily_limit: 40
-max_per_run: 3
-max_age_hours: 12
+daily_limit: 10
+max_per_run: 1
+max_age_hours: 3
 similarity_threshold: 0.7
 similarity_window_hours: 48
 
@@ -27,7 +30,7 @@ image_min_width: 600
 image_blocklist: [] # görseli kullanılmayacak kaynak adları, örn. [Sherdog]
 
 llm:
-  max_chars: 270 # "Kaynak: ..." dahil toplam üst sınır
+  max_chars: 200 # "Kaynak: ..." dahil toplam üst sınır
   glossary: # İngilizce: Türkçe
     flyweight: sinek siklet
     bantamweight: horoz siklet
