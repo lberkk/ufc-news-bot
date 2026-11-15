@@ -6,7 +6,7 @@ feeds:
     url: https://www.sherdog.com/rss/news.xml
 
 daily_limit: 40
-max_per_run: 1
+max_per_run: 3
 max_age_hours: 12
 similarity_threshold: 0.7
 similarity_window_hours: 48
@@ -20,6 +20,7 @@ exclude_keywords:
   - fantasy
   - how to watch
   - live stream
+  - live blog
 
 image_mode: feed # feed | none
 image_min_width: 600
