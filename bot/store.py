@@ -45,5 +45,14 @@ class Store:
             "SELECT COUNT(*) FROM items WHERE seen_at>? AND status='posted'", (since,)
         ).fetchone()[0]
 
+    def recent_posts(self, hours=24, limit=30):
+        """Son paylaşılan post metinleri, eskiden yeniye."""
+        since = time.time() - hours * 3600
+        rows = self.db.execute(
+            "SELECT post_text FROM items WHERE seen_at>? AND status IN ('posted','draft') "
+            "AND post_text IS NOT NULL ORDER BY seen_at DESC LIMIT ?", (since, limit),
+        ).fetchall()
+        return [" ".join(r[0].split()) for r in reversed(rows)]
+
     def image_hash_count(self, h):
         return self.db.execute("SELECT COUNT(*) FROM items WHERE image_hash=?", (h,)).fetchone()[0]

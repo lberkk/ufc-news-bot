@@ -36,12 +36,12 @@ def main():
             continue
         item["body"] = feeds.fetch_article(item["link"])
         try:
-            text, category = writer.write_post(item, cfg["llm"])
+            text, category = writer.write_post(item, cfg["llm"], db.recent_posts())
         except writer.LLMError as exc:
             print(f"[llm] {exc}")
             break  # kota bitti veya servis yok; haber sonraki çalıştırmada yeniden denenir
         if text is None:
-            db.record(item, "skipped")
+            db.record(item, category or "skipped")
             continue
         image, digest = images.prepare(item, cfg, db)
         post_id = publish.publish(text, image, item, category)

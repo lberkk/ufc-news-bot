@@ -28,6 +28,53 @@ image_blocklist: [] # görseli kullanılmayacak kaynak adları, örn. [Sherdog]
 
 llm:
   max_chars: 270 # "Kaynak: ..." dahil toplam üst sınır
+  glossary: # İngilizce: Türkçe
+    flyweight: sinek siklet
+    bantamweight: horoz siklet
+    featherweight: tüy siklet
+    lightweight: hafif siklet
+    welterweight: yarı orta siklet
+    middleweight: orta siklet
+    light heavyweight: hafif ağır siklet
+    heavyweight: ağır siklet
+    knockout: nakavt
+    technical knockout: teknik nakavt
+    decision: hakem kararı
+    unanimous decision: ortak karar
+    split decision: ayrık karar
+    majority decision: çoğunluk kararı
+    majority draw: çoğunluk kararıyla beraberlik
+    split draw: ayrık kararla beraberlik
+    submission: pes ettirme
+    submitted (someone): pes ettirdi
+    finish: bitiriş
+    title fight: kemer maçı
+    title defense: kemer savunması
+    interim title: geçici kemer
+    undisputed champion: tartışmasız şampiyon
+    main card: ana kart
+    main event: ana maç
+    co-main event: eş ana maç
+    prelims: ön kart
+    weigh-in: tartı
+    missed weight: tartıyı tutturamadı
+    faceoff or staredown: bakışma
+    record (10-0): derece
+    debut: ilk maç
+    tech fall (wrestling): teknik üstünlük
+    pin (wrestling): tuş
+  keep_english: # çevrilmeyecek, kaynaktaki haliyle yazılacak
+    - rear-naked choke
+    - D'Arce choke
+    - guillotine
+    - armbar
+    - kimura
+    - wheel kick
+    - takedown
+    - ground and pound
+    - clinch
+    - catchweight
+    - no contest
   providers: # sırayla denenir; hata veya limit olursa sonrakine geçilir
     - name: groq
       base_url: https://api.groq.com/openai/v1
