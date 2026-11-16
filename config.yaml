@@ -43,7 +43,7 @@ llm:
     bantamweight: horoz siklet
     featherweight: tüy siklet
     lightweight: hafif siklet
-    welterweight: yarı orta siklet
+    welterweight: welter siklet
     middleweight: orta siklet
     light heavyweight: hafif ağır siklet
     heavyweight: ağır siklet
@@ -64,12 +64,12 @@ llm:
     undisputed champion: tartışmasız şampiyon
     main card: ana kart
     main event: ana maç
-    co-main event: eş ana maç
+    co-main event: yan ana maç
     prelims: ön kart
     weigh-in: tartı
     missed weight: tartıyı tutturamadı
-    faceoff or staredown: bakışma
-    record (10-0): derece
+    faceoff or staredown: yüzleşme
+    record (10-0): rekor
     debut: ilk maç
     tech fall (wrestling): teknik üstünlük
     pin (wrestling): tuş
