@@ -1,14 +1,23 @@
-# Haber kaynakları. Her koşuda hepsi birlikte taranır ve haberler yayın saatine göre işlenir;
-# aynı haber iki kaynakta varsa önce yayımlanan paylaşılır, diğeri tekrar olarak elenir.
+# Haber kaynakları. Her koşuda hepsi birlikte taranır ve haberler yayın saatine göre işlenir
+# (normal günde en yeni önce, etkinlik gününde en eski önce); aynı haber iki kaynakta varsa
+# ilk işlenen paylaşılır, diğeri tekrar olarak elenir.
 feeds:
   - name: MMA Fighting
     url: https://www.mmafighting.com/rss/index.xml
   - name: Bloody Elbow
     url: https://bloodyelbow.com/feed/
 
-daily_limit: 10
+daily_limit: 20
 max_per_run: 1
-max_age_hours: 3
+max_age_hours: 12
+active_hours: [12, 24] # TSİ; normal günde yalnızca bu aralıkta post atılır (12:00-23:59)
+min_minutes_between_posts: 60 # normal günde iki post arası en az süre
+
+# Etkinlik günleri: sonuçların geldiği TSİ tarihi (ABD cumartesi gecesi -> pazar), tırnaksız.
+# Bu günlerde saat aralığı ve post arası süre uygulanmaz, aşağıdaki limitler geçerli olur.
+event_days: [] # örn. [2026-11-22, 2026-12-06]
+event_daily_limit: 25
+event_max_per_run: 3
 similarity_threshold: 0.7
 similarity_window_hours: 48
 

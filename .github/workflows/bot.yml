@@ -1,9 +1,7 @@
 name: ufc-news-bot
 
 on:
-  schedule:
-    - cron: "*/15 * * * *"
-  workflow_dispatch:
+  workflow_dispatch: # cron-job.org tetikler (normal günler 15 dk, etkinlik gecesi 5 dk)
 
 permissions:
   contents: write

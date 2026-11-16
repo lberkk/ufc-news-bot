@@ -6,6 +6,8 @@ import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+TZ = ZoneInfo("Europe/Istanbul")
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS items (
     link TEXT PRIMARY KEY, source TEXT, title TEXT, norm TEXT,
@@ -43,11 +45,16 @@ class Store:
 
     def published_today(self):
         """Türkiye saatiyle bugün gece yarısından beri atılan post sayısı."""
-        now = datetime.now(ZoneInfo("Europe/Istanbul"))
+        now = datetime.now(TZ)
         since = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
         return self.db.execute(
             "SELECT COUNT(*) FROM items WHERE seen_at>? AND status='posted'", (since,)
         ).fetchone()[0]
+
+    def last_post_time(self):
+        """Son atılan postun zamanı (epoch); hiç yoksa 0."""
+        row = self.db.execute("SELECT MAX(seen_at) FROM items WHERE status='posted'").fetchone()
+        return row[0] or 0
 
     def recent_posts(self, hours=24, limit=30):
         """Son paylaşılan post metinleri, eskiden yeniye."""
