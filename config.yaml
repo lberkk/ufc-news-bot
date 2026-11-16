@@ -11,7 +11,7 @@ daily_limit: 20
 max_per_run: 1
 max_age_hours: 12
 active_hours: [12, 24] # TSİ; normal günde yalnızca bu aralıkta post atılır (12:00-23:59)
-min_minutes_between_posts: 60 # normal günde iki post arası en az süre
+min_minutes_between_posts: 59 # normal günde iki post arası en az süre
 
 # Etkinlik günleri: sonuçların geldiği TSİ tarihi (ABD cumartesi gecesi -> pazar), tırnaksız.
 # Bu günlerde saat aralığı ve post arası süre uygulanmaz, aşağıdaki limitler geçerli olur.
