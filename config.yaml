@@ -73,6 +73,7 @@ llm:
     debut: ilk maç
     tech fall (wrestling): teknik üstünlük
     pin (wrestling): tuş
+    rematch: rövanş
   keep_english: # çevrilmeyecek, kaynaktaki haliyle yazılacak
     - rear-naked choke
     - D'Arce choke
