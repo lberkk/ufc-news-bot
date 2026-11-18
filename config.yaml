@@ -85,6 +85,7 @@ llm:
     - ground and pound
     - clinch
     - catchweight
+    - contender
     - no contest
   providers: # sırayla denenir; hata veya limit olursa sonrakine geçilir
     - name: claude-haiku
