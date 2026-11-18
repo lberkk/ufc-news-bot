@@ -7,7 +7,7 @@ feeds:
   - name: Bloody Elbow
     url: https://bloodyelbow.com/feed/
 
-daily_limit: 20
+daily_limit: 10
 max_per_run: 1
 max_age_hours: 12
 active_hours: [12, 24] # TSİ; normal günde yalnızca bu aralıkta post atılır (12:00-23:59)
