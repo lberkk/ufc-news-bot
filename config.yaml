@@ -12,6 +12,7 @@ max_per_run: 1
 max_age_hours: 12
 active_hours: [12, 24] # TSİ; normal günde yalnızca bu aralıkta post atılır (12:00-23:59)
 min_minutes_between_posts: 59 # normal günde iki post arası en az süre
+max_process_per_run: 10 # koşu başına LLM ile yazılacak en fazla yeni haber (X'ten bağımsız)
 
 # Etkinlik günleri: sonuçların geldiği TSİ tarihi (ABD cumartesi gecesi -> pazar), tırnaksız.
 # Bu günlerde saat aralığı ve post arası süre uygulanmaz, aşağıdaki limitler geçerli olur.
@@ -31,6 +32,11 @@ exclude_keywords:
   - how to watch
   - live stream
   - live blog
+
+# Clinch uygulaması: filtreden geçen her yeni haber X kısıtlarından bağımsız gönderilir.
+# Adres ve anahtar GitHub secret'larından gelir (CLINCH_API_URL, CLINCH_API_KEY).
+clinch:
+  send_per_run: 20
 
 image_mode: feed # feed | none
 image_min_width: 600

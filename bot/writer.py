@@ -6,15 +6,15 @@ import re
 import anthropic
 import requests
 
-SYSTEM = """You write posts in Turkish for a UFC/MMA news account on X.
-You will receive the title and summary of an English news article. Rules:
-- Write the post in natural, fluent Turkish, in a plain news register.
+SYSTEM = """You write UFC/MMA news for two outlets: a short Turkish post for an X account, and a title and summary in Turkish and in English for a mobile news app.
+You will receive the title and summary of an English news article. Rules for all texts:
+- Write the Turkish texts in natural, fluent Turkish, in a plain news register.
 - Use only information present in the article. Never add facts, dates, results or opinions that are not in it.
 - Keep fighter names, event names and numbers exactly as written in the source.
 - English headlines and previews describe upcoming fights in the present tense ("clash", "square off", "faces", "defends"). Treat a fight as already finished only if the article states its outcome (who won and how). Otherwise it has not happened yet: write it in the Turkish future tense ("karşılaşacak", "savunacak"), never in the past tense.
 - Write your own sentences; do not translate the headline word for word.
 - No emojis, hashtags, links, exclamation marks or questions.
-- The text must be at most {limit} characters.
+- The post text must be at most {limit} characters.
 - Use exactly these Turkish terms (English = Turkish):
 {glossary}
 - Keep these terms in English, exactly as written in the source: {keep}.
@@ -22,15 +22,20 @@ You will receive the title and summary of an English news article. Rules:
 - Apart from the terms kept in English and proper names, do not leave English words in the text (write "efsane", not "legend"; "tecrübeli", not "veteran").
 - Give judges' scores only together with who they favored; if unsure, state only the decision type.
 - Set skip=true if the article is not about the UFC or UFC fighters (skip PFL, Bellator, ONE and other promotions unless a UFC fighter or the UFC itself is central to the story).
-- You also receive the posts this account published recently. Set duplicate=true if the article adds no new fact to what those posts already say (the same result, announcement or statement told again, e.g. a highlights or video page for a fight whose result was already posted). If it does add new facts, write only about what is new and do not repeat what was already posted.
+- You also receive the posts this account published recently. Set duplicate=true if the article adds no new fact to what those posts already say (the same result, announcement or statement told again, e.g. a highlights or video page for a fight whose result was already posted). If it does add new facts, the post text covers only what is new and does not repeat what was already posted.
 - Reaction and opinion articles: statements by current or former UFC fighters named in the article count as new facts. Write who said what, naming them, and do not restate the result. Set skip=true if the reactions or opinions are those of journalists, the site's staff, analysts or fans (columns, analysis pieces, staff roundtables).
+- title: a short, clear Turkish headline for the app, written in your own words.
+- summary: a Turkish summary of the whole article for the app. Cover every relevant fact in the article, in as many sentences as it needs; there is no length limit. Separate paragraphs with a blank line. All rules above apply except the character limit.
+- title_en, summary_en: the same title and summary in English for the app's English users, written in your own words; do not copy sentences from the article. The rules about facts, names, numbers, tense and judges' scores apply; the Turkish terms list and the rule against English words do not.
+- fighters: the full names of the fighters the article mentions, exactly as written in the source.
+- When skip or duplicate is true, leave text, title, summary, title_en and summary_en empty.
 
-Examples of the expected style:
+Examples of the expected post style:
 - "Fighter A, UFC 400'de hafif sıklet kemeri için Fighter B ile karşılaşacak. Maç, 12 Aralık'taki etkinliğin ana karşılaşması olacak."
 - "Fighter C, dizinden sakatlandığı için cumartesi günkü maçından çekildi. UFC, yerine geçecek isim için arayışta."
 
 Return only this JSON:
-{{"skip": false, "duplicate": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "..."}}"""
+{{"skip": false, "duplicate": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "...", "title": "...", "summary": "...", "title_en": "...", "summary_en": "...", "fighters": ["..."]}}"""
 
 
 class LLMError(Exception):
@@ -79,13 +84,20 @@ def _parse(raw):
     m = re.search(r"\{.*\}", raw, re.S)
     if not m:
         raise LLMError("JSON bulunamadı")
-    return json.loads(m.group(0))
+    return json.loads(m.group(0), strict=False)
+
+
+def _app_fields(data):
+    fields = {k: (data.get(k) or "").strip() for k in ("title", "summary", "title_en", "summary_en")}
+    if not all(fields.values()) or "http" in " ".join(fields.values()).lower():
+        return None
+    fighters = [f.strip() for f in data.get("fighters") or [] if isinstance(f, str) and f.strip()]
+    return {**fields, "fighters": fighters, "category": data.get("category") or "Diğer"}
 
 
 def write_post(item, cfg, recent=(), call=_call):
-    """(text, category) döner; haber atlanacaksa (None, None), tekrarsa (None, "duplicate")."""
-    suffix = ""
-    limit = cfg["max_chars"] - len(suffix)
+    """Sonuç sözlüğü döner: {"status": "ok"|"skipped"|"duplicate", "text", "category", "title", "summary", "title_en", "summary_en", "fighters"}."""
+    limit = cfg["max_chars"]
     glossary = "\n".join(f"  {en} = {tr}" for en, tr in cfg.get("glossary", {}).items())
     keep = ", ".join(cfg.get("keep_english", []))
     posted = "\n".join(f"- {p}" for p in recent) or "(none)"
@@ -103,16 +115,23 @@ def write_post(item, cfg, recent=(), call=_call):
                 print(f"[llm] {last}")
                 break  # bu sağlayıcı çalışmıyor, sıradakine geç
             if data.get("skip"):
-                return None, None
+                return {"status": "skipped"}
             if data.get("duplicate"):
-                return None, "duplicate"
+                return {"status": "duplicate"}
+            app = _app_fields(data)
             text = (data.get("text") or "").strip()
-            if text and len(text) <= limit and "http" not in text.lower():
-                return text + suffix, data.get("category", "Diğer")
-            last = f"{provider['name']}: geçersiz çıktı ({len(text)} karakter)"
+            post_ok = text and len(text) <= limit and "http" not in text.lower()
+            if app and post_ok:
+                return {"status": "ok", "text": text, **app}
+            if not app:
+                last = f"{provider['name']}: başlık veya özet (TR/EN) eksik"
+                fix = "A title or summary (Turkish or English) is missing or contains a link. Fill all of them and return the same JSON format."
+            else:
+                last = f"{provider['name']}: geçersiz post ({len(text)} karakter)"
+                fix = f"The post text exceeds {limit} characters or contains a link. Shorten it and return the same JSON format."
             print(f"[llm] {last}")
             messages = messages[:2] + [
                 {"role": "assistant", "content": json.dumps(data, ensure_ascii=False)},
-                {"role": "user", "content": f"The text exceeds {limit} characters or contains a link. Shorten it and return the same JSON format."},
+                {"role": "user", "content": fix},
             ]
     raise LLMError(f"Hiçbir sağlayıcı sonuç vermedi. Son hata: {last}")

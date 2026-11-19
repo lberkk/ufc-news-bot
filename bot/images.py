@@ -22,6 +22,12 @@ def _og_image(page_url):
             return m.group(1)
     return None
 
+def find_url(item):
+    """Haberin görsel adresi: feed'deki görsel, yoksa sayfanın og:image etiketi."""
+    if not item.get("image"):
+        item["image"] = _og_image(item["link"])
+    return item["image"]
+
 
 def prepare(item, cfg, store):
     """(jpeg_bytes, sha256) döner; kullanılabilir görsel yoksa (None, None)."""
