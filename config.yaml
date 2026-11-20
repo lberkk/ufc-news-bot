@@ -38,6 +38,14 @@ exclude_keywords:
 clinch:
   send_per_run: 20
 
+# Telegram: habere gömülü videolu X postu varsa post metni + alıntılanacak link gönderilir.
+# Metin X'e yapıştırılınca sondaki link postu alıntıya çevirir. Token ve chat id GitHub
+# secret'larından gelir (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID).
+telegram:
+  enabled: true
+  per_run: 5
+  only_video: true # false: videolu olsun olmasın habere gömülü ilk post gönderilir
+
 image_mode: feed # feed | none
 image_min_width: 600
 image_blocklist: [] # görseli kullanılmayacak kaynak adları, örn. [Sherdog]

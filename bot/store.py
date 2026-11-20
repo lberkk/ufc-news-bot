@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS items (
 NEW_COLUMNS = {
     "published": "REAL", "posted_at": "REAL", "category": "TEXT",
     "ai_title": "TEXT", "ai_summary": "TEXT", "ai_title_en": "TEXT", "ai_summary_en": "TEXT",
-    "fighters": "TEXT", "app_status": "TEXT",
+    "fighters": "TEXT", "app_status": "TEXT", "video_url": "TEXT", "tg_status": "TEXT",
 }
 # status: filtered | duplicate | skipped | queued (X sırasında) | posted | draft
 ACCEPTED = "('queued','posted','draft')"
@@ -73,6 +73,26 @@ class Store:
     def set_app_status(self, link, status):
         self.db.execute("UPDATE items SET app_status=? WHERE link=?", (status, link))
         self.db.commit()
+
+    def set_video(self, link, video_url):
+        self.db.execute("UPDATE items SET video_url=? WHERE link=?", (video_url, link))
+        self.db.commit()
+
+    def video_used(self, video_url):
+        return self.db.execute("SELECT 1 FROM items WHERE video_url=?", (video_url,)).fetchone() is not None
+
+    def set_tg_status(self, link, status):
+        self.db.execute("UPDATE items SET tg_status=? WHERE link=?", (status, link))
+        self.db.commit()
+
+    def tg_pending(self, limit):
+        """Telegram'a gönderilmeyi bekleyen videolu haberler (eskiden yeniye)."""
+        rows = self.db.execute(
+            "SELECT link, post_text, video_url FROM items "
+            f"WHERE status IN {ACCEPTED} AND video_url IS NOT NULL AND tg_status IS NULL "
+            "ORDER BY COALESCE(published, seen_at) LIMIT ?", (limit,),
+        )
+        return [dict(r) for r in rows]
 
     def queued(self, since, newest_first):
         """X'e gönderilmeyi bekleyen haberler."""

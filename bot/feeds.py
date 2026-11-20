@@ -48,6 +48,7 @@ def fetch_all(feeds):
                     "link": e.link,
                     "published": calendar.timegm(t) if t else time.time(),
                     "image": _image_from_entry(e),
+                    "html": e.get("summary", "") + "".join(c.get("value", "") for c in e.get("content") or []),
                 })
         except Exception as exc:  # tek feed'in hatası botu durdurmasın
             print(f"[feed] {feed['name']} okunamadı: {exc}")

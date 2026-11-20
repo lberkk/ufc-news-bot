@@ -5,7 +5,7 @@ from datetime import datetime
 
 import yaml
 
-from bot import clinch, feeds, images, publish, store, writer
+from bot import clinch, feeds, images, publish, store, telegram, writer, xvideo
 
 
 def process_new(cfg, db, fetched):
@@ -42,6 +42,29 @@ def process_new(cfg, db, fetched):
         images.find_url(item)
         db.record(item, "queued", result)
         print(f"[yeni] {result['title'][:80]}")
+        tg = cfg.get("telegram", {})
+        if tg.get("enabled"):
+            video = xvideo.find_video(item.get("html"), tg.get("only_video", True))
+            if video and not db.video_used(video):
+                db.set_video(item["link"], video)
+                print(f"[xvideo] {video}")
+
+
+def send_to_telegram(cfg, db):
+    """Videolu haberlerin metnini ve alıntılanacak X linkini Telegram'a gönderir."""
+    tg = cfg.get("telegram", {})
+    if not tg.get("enabled"):
+        return
+    if not telegram.enabled():
+        print("[telegram] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID tanımlı değil, gönderilmiyor.")
+        return
+    sent = 0
+    for row in db.tg_pending(tg.get("per_run", 5)):
+        if not telegram.send(f"{row['post_text']}\n\n{row['video_url']}"):
+            break  # kalanlar sonraki koşuda gönderilir
+        db.set_tg_status(row["link"], "sent")
+        sent += 1
+    print(f"[telegram] {sent} videolu post gönderildi.")
 
 
 def send_to_app(cfg, db):
@@ -107,6 +130,7 @@ def main():
         sys.exit(1)
     process_new(cfg, db, fetched)
     send_to_app(cfg, db)
+    send_to_telegram(cfg, db)
     post_to_x(cfg, db)
 
 
