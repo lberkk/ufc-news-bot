@@ -60,7 +60,8 @@ def send_to_telegram(cfg, db):
         return
     sent = 0
     for row in db.tg_pending(tg.get("per_run", 5)):
-        if not telegram.send(f"{row['post_text']}\n\n{row['video_url']}"):
+        link = row["video_url"].rstrip("/") + "/video/1"  # X'te alıntı yerine videoyu gösterir
+        if not telegram.send(f"{row['post_text']}\n\n{link}"):
             break  # kalanlar sonraki koşuda gönderilir
         db.set_tg_status(row["link"], "sent")
         sent += 1
