@@ -89,7 +89,7 @@ class Store:
         """Telegram'a gönderilmeyi bekleyen videolu haberler (eskiden yeniye)."""
         rows = self.db.execute(
             "SELECT link, post_text, video_url FROM items "
-            f"WHERE status IN {ACCEPTED} AND video_url IS NOT NULL AND tg_status IS NULL "
+            "WHERE status='queued' AND video_url IS NOT NULL AND tg_status IS NULL "
             "ORDER BY COALESCE(published, seen_at) LIMIT ?", (limit,),
         )
         return [dict(r) for r in rows]
@@ -100,7 +100,8 @@ class Store:
         rows = self.db.execute(
             "SELECT link, source, title, image_url AS image, post_text, category, "
             "COALESCE(published, seen_at) AS published FROM items "
-            f"WHERE status='queued' AND COALESCE(published, seen_at)>=? ORDER BY COALESCE(published, seen_at) {order}",
+            # Videolu haberler Telegram üzerinden elle paylaşılır; bot X'e ayrıca atmaz.
+            f"WHERE status='queued' AND video_url IS NULL AND COALESCE(published, seen_at)>=? ORDER BY COALESCE(published, seen_at) {order}",
             (since,),
         )
         return [dict(r) for r in rows]
