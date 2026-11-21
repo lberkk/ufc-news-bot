@@ -18,7 +18,7 @@ max_process_per_run: 10 # koşu başına LLM ile yazılacak en fazla yeni haber 
 # post arası süre uygulanmaz, aşağıdaki event_* limitleri geçerli olur.
 event_windows:
   - ["2026-11-21 18:00", "2026-11-22 02:00"]
-event_daily_limit: 25
+event_daily_limit: 40
 event_max_per_run: 3
 similarity_threshold: 0.7
 similarity_window_hours: 48
