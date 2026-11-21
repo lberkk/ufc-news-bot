@@ -16,7 +16,7 @@ max_process_per_run: 10 # koşu başına LLM ile yazılacak en fazla yeni haber 
 
 # Etkinlik günleri: sonuçların geldiği TSİ tarihi (ABD cumartesi gecesi -> pazar), tırnaksız.
 # Bu günlerde saat aralığı ve post arası süre uygulanmaz, aşağıdaki limitler geçerli olur.
-event_days: [] # örn. [2026-11-22, 2026-12-06]
+event_days: [2026-11-21, 2026-11-22] # örn. [2026-11-22, 2026-12-06]
 event_daily_limit: 25
 event_max_per_run: 3
 similarity_threshold: 0.7
