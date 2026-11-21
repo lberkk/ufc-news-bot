@@ -83,15 +83,25 @@ def send_to_app(cfg, db):
     print(f"[clinch] {sent} haber uygulamaya gönderildi.")
 
 
+def in_event_window(cfg, now):
+    """Şu an config'teki etkinlik aralıklarından birinin içinde mi (TSİ)."""
+    for start, end in cfg.get("event_windows") or []:
+        s = datetime.strptime(start, "%Y-%m-%d %H:%M").replace(tzinfo=store.TZ)
+        e = datetime.strptime(end, "%Y-%m-%d %H:%M").replace(tzinfo=store.TZ)
+        if s <= now < e:
+            return True
+    return False
+
+
 def post_to_x(cfg, db):
     """Kuyruktaki haberleri X kurallarına (saat, aralık, günlük limit) göre paylaşır."""
     now = datetime.now(store.TZ)
-    event = now.date().isoformat() in {str(d) for d in cfg.get("event_days") or []}
+    event = in_event_window(cfg, now)
     if event:
         daily_limit = cfg.get("event_daily_limit", cfg["daily_limit"])
         max_per_run = cfg.get("event_max_per_run", cfg["max_per_run"])
         gap = 0
-        print("Etkinlik günü: saat aralığı ve post arası süre uygulanmıyor.")
+        print("Etkinlik saati: saat aralığı ve post arası süre uygulanmıyor.")
     else:
         daily_limit = cfg["daily_limit"]
         max_per_run = cfg["max_per_run"]
@@ -106,7 +116,7 @@ def post_to_x(cfg, db):
             return
 
     cutoff = time.time() - cfg["max_age_hours"] * 3600
-    # Etkinlik gününde eskiden yeniye (sonuçlar sırasıyla), normal günde önce en güncel olan.
+    # Etkinlik saatinde eskiden yeniye (sonuçlar sırasıyla), normal günde önce en güncel olan.
     queue = db.queued(cutoff, newest_first=not event)
     remaining = daily_limit - db.published_today()
     done = 0

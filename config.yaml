@@ -1,5 +1,5 @@
 # Haber kaynakları. Her koşuda hepsi birlikte taranır ve haberler yayın saatine göre işlenir
-# (normal günde en yeni önce, etkinlik gününde en eski önce); aynı haber iki kaynakta varsa
+# (normal zamanda en yeni önce, etkinlik saatinde en eski önce); aynı haber iki kaynakta varsa
 # ilk işlenen paylaşılır, diğeri tekrar olarak elenir.
 feeds:
   - name: MMA Fighting
@@ -14,9 +14,10 @@ active_hours: [12, 24] # TSİ; normal günde yalnızca bu aralıkta post atılı
 min_minutes_between_posts: 59 # normal günde iki post arası en az süre
 max_process_per_run: 10 # koşu başına LLM ile yazılacak en fazla yeni haber (X'ten bağımsız)
 
-# Etkinlik günleri: sonuçların geldiği TSİ tarihi (ABD cumartesi gecesi -> pazar), tırnaksız.
-# Bu günlerde saat aralığı ve post arası süre uygulanmaz, aşağıdaki limitler geçerli olur.
-event_days: [2026-11-21, 2026-11-22] # örn. [2026-11-22, 2026-12-06]
+# Etkinlik aralıkları (TSİ, "YYYY-MM-DD HH:MM"; bitiş hariç). Bu aralıkta saat sınırı ve
+# post arası süre uygulanmaz, aşağıdaki event_* limitleri geçerli olur.
+event_windows:
+  - ["2026-11-21 18:00", "2026-11-22 01:00"]
 event_daily_limit: 25
 event_max_per_run: 3
 similarity_threshold: 0.7
