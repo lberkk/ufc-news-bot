@@ -83,14 +83,18 @@ def send_to_app(cfg, db):
     print(f"[clinch] {sent} haber uygulamaya gönderildi.")
 
 
+def event_windows(cfg):
+    """Config'teki etkinlik aralıkları (TSİ) datetime çiftleri olarak."""
+    fmt = "%Y-%m-%d %H:%M"
+    return [
+        (datetime.strptime(s, fmt).replace(tzinfo=store.TZ), datetime.strptime(e, fmt).replace(tzinfo=store.TZ))
+        for s, e in cfg.get("event_windows") or []
+    ]
+
+
 def in_event_window(cfg, now):
     """Şu an config'teki etkinlik aralıklarından birinin içinde mi (TSİ)."""
-    for start, end in cfg.get("event_windows") or []:
-        s = datetime.strptime(start, "%Y-%m-%d %H:%M").replace(tzinfo=store.TZ)
-        e = datetime.strptime(end, "%Y-%m-%d %H:%M").replace(tzinfo=store.TZ)
-        if s <= now < e:
-            return True
-    return False
+    return any(s <= now < e for s, e in event_windows(cfg))
 
 
 def post_to_x(cfg, db):
@@ -118,7 +122,9 @@ def post_to_x(cfg, db):
     cutoff = time.time() - cfg["max_age_hours"] * 3600
     # Etkinlik saatinde eskiden yeniye (sonuçlar sırasıyla), normal günde önce en güncel olan.
     queue = db.queued(cutoff, newest_first=not event)
-    remaining = daily_limit - db.published_today()
+    # Normal günde etkinlik penceresinde atılan postlar (örn. gece yarısından sonrası) günlük limite sayılmaz.
+    exclude = [] if event else [(s.timestamp(), e.timestamp()) for s, e in event_windows(cfg)]
+    remaining = daily_limit - db.published_today(exclude)
     done = 0
     for item in queue:
         if done >= max_per_run or remaining <= 0 or (done and gap):

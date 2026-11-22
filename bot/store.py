@@ -116,13 +116,15 @@ class Store:
         )
         return [dict(r) for r in rows]
 
-    def published_today(self):
-        """Türkiye saatiyle bugün gece yarısından beri atılan post sayısı."""
+    def published_today(self, exclude=()):
+        """Türkiye saatiyle bugün gece yarısından beri atılan post sayısı.
+        exclude: sayılmayacak (başlangıç, bitiş) epoch aralıkları (örn. etkinlik pencereleri)."""
         now = datetime.now(TZ)
         since = now.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
-        return self.db.execute(
-            "SELECT COUNT(*) FROM items WHERE COALESCE(posted_at, seen_at)>? AND status='posted'", (since,)
-        ).fetchone()[0]
+        rows = self.db.execute(
+            "SELECT COALESCE(posted_at, seen_at) FROM items WHERE COALESCE(posted_at, seen_at)>? AND status='posted'", (since,)
+        ).fetchall()
+        return sum(1 for (t,) in rows if not any(s <= t < e for s, e in exclude))
 
     def last_post_time(self):
         """Son atılan postun zamanı (epoch); hiç yoksa 0."""
