@@ -1,9 +1,6 @@
-# Haber kaynakları. Her koşuda hepsi birlikte taranır ve haberler yayın saatine göre işlenir
-# (normal zamanda en yeni önce, etkinlik saatinde en eski önce); aynı haber iki kaynakta varsa
-# ilk işlenen paylaşılır, diğeri tekrar olarak elenir.
+# Haber kaynağı. Haberler yayın saatine göre işlenir
+# (normal zamanda en yeni önce, etkinlik saatinde en eski önce).
 feeds:
-  - name: MMA Fighting
-    url: https://www.mmafighting.com/rss/index.xml
   - name: Bloody Elbow
     url: https://bloodyelbow.com/feed/
 
@@ -20,8 +17,6 @@ event_windows:
   - ["2026-11-21 18:00", "2026-11-22 02:00"]
 event_daily_limit: 40
 event_max_per_run: 3
-similarity_threshold: 0.7
-similarity_window_hours: 48
 
 exclude_keywords:
   - betting

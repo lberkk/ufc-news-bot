@@ -1,5 +1,4 @@
 """SQLite durumu: görülen haberler, kuyruk, atılan postlar, uygulama gönderimleri."""
-import difflib
 import json
 import re
 import sqlite3
@@ -43,12 +42,6 @@ class Store:
 
     def seen(self, link):
         return self.db.execute("SELECT 1 FROM items WHERE link=?", (link,)).fetchone() is not None
-
-    def similar(self, title, window_hours, threshold):
-        since = time.time() - window_hours * 3600
-        norm = normalize(title)
-        rows = self.db.execute(f"SELECT norm FROM items WHERE seen_at>? AND status IN {ACCEPTED}", (since,))
-        return any(difflib.SequenceMatcher(None, norm, r[0]).ratio() >= threshold for r in rows)
 
     def record(self, item, status, result=None):
         """Yeni haberi kaydeder. result: writer.write_post çıktısı (kabul edilen haberlerde)."""
@@ -132,15 +125,6 @@ class Store:
             "SELECT MAX(COALESCE(posted_at, seen_at)) FROM items WHERE status='posted'"
         ).fetchone()
         return row[0] or 0
-
-    def recent_posts(self, hours=24, limit=30):
-        """Son kabul edilen haberlerin post metinleri (X'te paylaşılmayı bekleyenler dahil), eskiden yeniye."""
-        since = time.time() - hours * 3600
-        rows = self.db.execute(
-            f"SELECT post_text FROM items WHERE seen_at>? AND status IN {ACCEPTED} "
-            "AND post_text IS NOT NULL ORDER BY seen_at DESC LIMIT ?", (since, limit),
-        ).fetchall()
-        return [" ".join(r[0].split()) for r in reversed(rows)]
 
     def image_hash_count(self, h):
         return self.db.execute("SELECT COUNT(*) FROM items WHERE image_hash=?", (h,)).fetchone()[0]

@@ -11,7 +11,7 @@ from bot import clinch, feeds, images, publish, store, telegram, writer, xvideo
 def process_new(cfg, db, fetched):
     """Yeni haberleri filtreler ve LLM ile yazar. Kabul edilenler X kuyruğuna girer."""
     cutoff = time.time() - cfg["max_age_hours"] * 3600
-    # Tüm kaynaklar birlikte, eskiden yeniye: aynı haber iki kaynakta varsa önce yayımlanan kabul edilir.
+    # Eskiden yeniye işlenir.
     candidates = sorted(
         (i for _, items in fetched for i in items if i["published"] >= cutoff),
         key=lambda i: i["published"],
@@ -26,12 +26,9 @@ def process_new(cfg, db, fetched):
         if any(k in low for k in cfg["exclude_keywords"]):
             db.record(item, "filtered")
             continue
-        if db.similar(item["title"], cfg["similarity_window_hours"], cfg["similarity_threshold"]):
-            db.record(item, "duplicate")
-            continue
         item["body"] = feeds.fetch_article(item["link"])
         try:
-            result = writer.write_post(item, cfg["llm"], db.recent_posts())
+            result = writer.write_post(item, cfg["llm"])
         except writer.LLMError as exc:
             print(f"[llm] {exc}")
             return  # kota bitti veya servis yok; haber sonraki çalıştırmada yeniden denenir

@@ -22,20 +22,19 @@ You will receive the title and summary of an English news article. Rules for all
 - Apart from the terms kept in English and proper names, do not leave English words in the text (write "efsane", not "legend"; "tecrübeli", not "veteran").
 - Give judges' scores only together with who they favored; if unsure, state only the decision type.
 - Set skip=true if the article is not about the UFC or UFC fighters (skip PFL, Bellator, ONE and other promotions unless a UFC fighter or the UFC itself is central to the story).
-- You also receive the posts this account published recently. Set duplicate=true if the article adds no new fact to what those posts already say (the same result, announcement or statement told again, e.g. a highlights or video page for a fight whose result was already posted). If it does add new facts, the post text covers only what is new and does not repeat what was already posted.
 - Reaction and opinion articles: statements by current or former UFC fighters named in the article count as new facts. Write who said what, naming them, and do not restate the result. Set skip=true if the reactions or opinions are those of journalists, the site's staff, analysts or fans (columns, analysis pieces, staff roundtables).
 - title: a short, clear Turkish headline for the app, written in your own words.
 - summary: a Turkish summary of the whole article for the app. Cover every relevant fact in the article, in as many sentences as it needs; there is no length limit. Separate paragraphs with a blank line. All rules above apply except the character limit.
 - title_en, summary_en: the same title and summary in English for the app's English users, written in your own words; do not copy sentences from the article. The rules about facts, names, numbers, tense and judges' scores apply; the Turkish terms list and the rule against English words do not.
 - fighters: the full names of the fighters the article mentions, exactly as written in the source.
-- When skip or duplicate is true, leave text, title, summary, title_en and summary_en empty.
+- When skip is true, leave text, title, summary, title_en and summary_en empty.
 
 Examples of the expected post style:
 - "Fighter A, UFC 400'de hafif sıklet kemeri için Fighter B ile karşılaşacak. Maç, 12 Aralık'taki etkinliğin ana karşılaşması olacak."
 - "Fighter C, dizinden sakatlandığı için cumartesi günkü maçından çekildi. UFC, yerine geçecek isim için arayışta."
 
 Return only this JSON:
-{{"skip": false, "duplicate": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "...", "title": "...", "summary": "...", "title_en": "...", "summary_en": "...", "fighters": ["..."]}}"""
+{{"skip": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "...", "title": "...", "summary": "...", "title_en": "...", "summary_en": "...", "fighters": ["..."]}}"""
 
 
 class LLMError(Exception):
@@ -95,15 +94,14 @@ def _app_fields(data):
     return {**fields, "fighters": fighters, "category": data.get("category") or "Diğer"}
 
 
-def write_post(item, cfg, recent=(), call=_call):
-    """Sonuç sözlüğü döner: {"status": "ok"|"skipped"|"duplicate", "text", "category", "title", "summary", "title_en", "summary_en", "fighters"}."""
+def write_post(item, cfg, call=_call):
+    """Sonuç sözlüğü döner: {"status": "ok"|"skipped", "text", "category", "title", "summary", "title_en", "summary_en", "fighters"}."""
     limit = cfg["max_chars"]
     glossary = "\n".join(f"  {en} = {tr}" for en, tr in cfg.get("glossary", {}).items())
     keep = ", ".join(cfg.get("keep_english", []))
-    posted = "\n".join(f"- {p}" for p in recent) or "(none)"
     messages = [
         {"role": "system", "content": SYSTEM.format(limit=limit, glossary=glossary, keep=keep)},
-        {"role": "user", "content": f"Recently published posts:\n{posted}\n\nTitle: {item['title']}\nSummary: {item['summary']}\nArticle text: {item.get('body', '')}"},
+        {"role": "user", "content": f"Title: {item['title']}\nSummary: {item['summary']}\nArticle text: {item.get('body', '')}"},
     ]
     last = None
     for provider in cfg["providers"]:
@@ -116,8 +114,6 @@ def write_post(item, cfg, recent=(), call=_call):
                 break  # bu sağlayıcı çalışmıyor, sıradakine geç
             if data.get("skip"):
                 return {"status": "skipped"}
-            if data.get("duplicate"):
-                return {"status": "duplicate"}
             app = _app_fields(data)
             text = (data.get("text") or "").strip()
             post_ok = text and len(text) <= limit and "http" not in text.lower()
