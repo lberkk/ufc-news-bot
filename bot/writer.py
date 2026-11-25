@@ -23,17 +23,18 @@ You will receive the title and summary of an English news article. Rules for all
 - Give judges' scores only together with who they favored; if unsure, state only the decision type.
 - Set skip=true if the article is not about the UFC or UFC fighters (skip PFL, Bellator, ONE and other promotions unless a UFC fighter or the UFC itself is central to the story).
 - Reaction and opinion articles: statements by current or former UFC fighters named in the article count as new facts. Write who said what, naming them, and do not restate the result. Set skip=true if the reactions or opinions are those of journalists, the site's staff, analysts or fans (columns, analysis pieces, staff roundtables).
-- title: a faithful Turkish translation of the article's title. Translate it; do not rewrite or reinterpret it.
+- title: a short Turkish headline for the app (at most 70 characters) that condenses the article's title. Keep the key facts (who, what, event); drop secondary details. Do not add information.
+- title_en: the same short headline in English (at most 70 characters), condensed from the original title. Do not add information.
 - summary: a faithful Turkish translation of the full article text, paragraph by paragraph and sentence by sentence. Do not summarize, shorten, merge, reorder, add, comment or interpret: every sentence of the source appears once, with the same meaning, in the same order. Keep the same paragraph breaks (separate paragraphs with a blank line). Translate quotes as quotes. Natural Turkish word order is fine, but the content must stay identical. The glossary, names, numbers and tense rules apply; the character limit does not.
 - fighters: the full names of the fighters the article mentions, exactly as written in the source.
-- When skip is true, leave text, title and summary empty.
+- When skip is true, leave text, title, title_en and summary empty.
 
 Examples of the expected post style:
 - "Fighter A, UFC 400'de hafif sıklet kemeri için Fighter B ile karşılaşacak. Maç, 12 Aralık'taki etkinliğin ana karşılaşması olacak."
 - "Fighter C, dizinden sakatlandığı için cumartesi günkü maçından çekildi. UFC, yerine geçecek isim için arayışta."
 
 Return only this JSON:
-{{"skip": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "...", "title": "...", "summary": "...", "fighters": ["..."]}}"""
+{{"skip": false, "category": "Maç duyurusu|Sonuç|Sakatlık|Transfer|Açıklama|Diğer", "text": "...", "title": "...", "title_en": "...", "summary": "...", "fighters": ["..."]}}"""
 
 
 class LLMError(Exception):
@@ -89,8 +90,8 @@ def _app_fields(data, item):
     fields = {k: (data.get(k) or "").strip() for k in ("title", "summary")}
     if "http" in " ".join(fields.values()).lower():
         return None
-    # İngilizce: kaynaktaki başlık ve metin olduğu gibi.
-    fields["title_en"] = item["title"]
+    # İngilizce: başlık LLM ile kısaltılmış, metin kaynaktaki gibi.
+    fields["title_en"] = (data.get("title_en") or "").strip() or item["title"]
     fields["summary_en"] = (item.get("body") or item.get("summary") or "").strip()
     if not all(fields.values()):
         return None
