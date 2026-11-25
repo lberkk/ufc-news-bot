@@ -30,6 +30,22 @@ def _clean(html):
     return re.sub(r"\s+", " ", text).strip()
 
 
+def _paragraphs(html, limit=12000):
+    """HTML'deki <p>/<h2-4> bloklarını paragraf paragraf (boş satırla ayrılmış) düz metne çevirir."""
+    html = re.sub(r"<(script|style|nav|header|footer|figure)[^>]*>.*?</\1>", " ", html or "", flags=re.S | re.I)
+    parts = re.findall(r"<(p|h[2-4])[^>]*>(.*?)</\1>", html, re.S | re.I)
+    out, size = [], 0
+    for _, p in parts:
+        t = re.sub(r"\s+([,.;:!?])", r"\1", htmllib.unescape(_clean(p)))
+        if not t or re.search(r"(?i)^(follow|subscribe|read more|related:)", t):
+            continue
+        if size + len(t) > limit:
+            break  # paragraf sınırında kes
+        out.append(t)
+        size += len(t) + 2
+    return "\n\n".join(out)
+
+
 def fetch_all(feeds):
     """[(feed_name, [item, ...])] döner. Okunamayan feed boş liste verir."""
     out = []
@@ -48,6 +64,7 @@ def fetch_all(feeds):
                     "link": e.link,
                     "published": calendar.timegm(t) if t else time.time(),
                     "image": _image_from_entry(e),
+                    "body": _paragraphs("".join(c.get("value", "") for c in e.get("content") or [])),
                     "html": e.get("summary", "") + "".join(c.get("value", "") for c in e.get("content") or []),
                 })
         except Exception as exc:  # tek feed'in hatası botu durdurmasın
@@ -56,14 +73,11 @@ def fetch_all(feeds):
         out.append((feed["name"], items))
     return out
 
-def fetch_article(url, limit=5000):
+def fetch_article(url, limit=12000):
     """Haber sayfasının gövde metnini döner; alınamazsa boş metin."""
     try:
         page = requests.get(url, headers={"User-Agent": "Mozilla/5.0 (compatible; ufc-news-bot/1.0)"}, timeout=20).text
     except requests.RequestException as exc:
         print(f"[article] alınamadı: {exc}")
         return ""
-    page = re.sub(r"<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", page, flags=re.S | re.I)
-    parts = re.findall(r"<(?:p|li)[^>]*>(.*?)</(?:p|li)>", page, re.S | re.I)
-    texts = [htmllib.unescape(_clean(p)) for p in parts]
-    return " ".join(t for t in texts if len(t) > 40)[:limit]
+    return _paragraphs(page, limit)

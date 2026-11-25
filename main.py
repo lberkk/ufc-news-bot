@@ -26,7 +26,7 @@ def process_new(cfg, db, fetched):
         if any(k in low for k in cfg["exclude_keywords"]):
             db.record(item, "filtered")
             continue
-        item["body"] = feeds.fetch_article(item["link"])
+        item["body"] = item.get("body") or feeds.fetch_article(item["link"])
         try:
             result = writer.write_post(item, cfg["llm"])
         except writer.LLMError as exc:
